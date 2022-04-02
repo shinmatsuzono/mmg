@@ -36,7 +36,7 @@ dependencies:
 
   # Add for auth0
   http: ^0.13.4
-  flutter_appauth: ^0.9.1
+  flutter_appauth: ^2.4.1
   flutter_secure_storage: ^3.3.3
   flutter_dotenv: ^5.0.2
 

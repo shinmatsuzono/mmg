@@ -60,15 +60,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Map<String, dynamic> parseIdToken(String idToken) {
-    final parts = idToken.split(r'.');
+  Map<String, dynamic> parseIdToken(String? idToken) {
+    final parts = idToken!.split(r'.');
     assert(parts.length == 3);
 
     return jsonDecode(
         utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
   }
 
-  Future<Map<String, dynamic>> getUserDetails(String accessToken) async {
+  Future<Map<String, dynamic>> getUserDetails(String? accessToken) async {
     final url = Uri.parse('https://$AUTH0_DOMAIN/userinfo');
     final response = await http.get(
       url,
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     try {
-      final AuthorizationTokenResponse result =
+      final AuthorizationTokenResponse? result =
           await appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(AUTH0_CLIENT_ID, AUTH0_REDIRECT_URI,
             issuer: 'https://$AUTH0_DOMAIN',
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
       );
 
-      final idToken = parseIdToken(result.idToken);
+      final idToken = parseIdToken(result!.idToken);
       final profile = await getUserDetails(result.accessToken);
 
       await secureStorage.write(
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
         refreshToken: storedRefreshToken,
       ));
 
-      final idToken = parseIdToken(response.idToken);
+      final idToken = parseIdToken(response!.idToken);
       final profile = await getUserDetails(response.accessToken);
 
       secureStorage.write(key: 'refresh_token', value: response.refreshToken);
