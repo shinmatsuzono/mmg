@@ -43,11 +43,14 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.mmg"
-        minSdkVersion 16
-        targetSdkVersion 30
+        applicationId "com.mmg.obog"
+        minSdkVersion 18
+        targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'com.mmg.obog'
+        ]
     }
 
     buildTypes {

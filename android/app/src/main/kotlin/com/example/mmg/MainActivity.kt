@@ -1,4 +1,4 @@
-package com.example.mmg
+package com.mmg.obog
 
 import io.flutter.embedding.android.FlutterActivity
 

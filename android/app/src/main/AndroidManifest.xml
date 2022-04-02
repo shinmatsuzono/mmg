@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mmg">
+    package="com.mmg.obog">
    <application
         android:label="MMG"
         android:icon="@mipmap/ic_launcher">
