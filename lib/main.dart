@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Map<String, dynamic>> getUserDetails(String accessToken) async {
-    final url = 'https://$AUTH0_DOMAIN/userinfo';
+    final url = Uri.parse('https://$AUTH0_DOMAIN/userinfo');
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $accessToken'},
@@ -199,7 +199,7 @@ class Profile extends StatelessWidget {
             shape: BoxShape.circle,
             image: DecorationImage(
               fit: BoxFit.fill,
-              image: NetworkImage(picture ?? ''),
+              image: NetworkImage(picture),
             ),
           ),
         ),
@@ -238,7 +238,7 @@ class Login extends StatelessWidget {
           },
           child: Text('Login'),
         ),
-        Text(loginError ?? ''),
+        Text(loginError),
       ],
     );
   }
