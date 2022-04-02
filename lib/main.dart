@@ -10,16 +10,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 ///          External Packages
 /// -----------------------------------
 final FlutterAppAuth appAuth = FlutterAppAuth();
-final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
 /// -----------------------------------
 ///           Auth0 Variables
 /// -----------------------------------
 
-String AUTH0_DOMAIN = dotenv.get('AUTH0_DOMAIN');
-String AUTH0_CLIENT_ID = dotenv.get('AUTH0_CLIENT_ID');
-String AUTH0_REDIRECT_URI = dotenv.get('AUTH0_REDIRECT_URI');
-String AUTH0_ISSUER = dotenv.get('AUTH0_ISSUER');
+String auth0Domain = dotenv.get('AUTH0_DOMAIN');
+String auth0ClientId = dotenv.get('AUTH0_CLIENT_ID');
+String auth0RedirectUri = dotenv.get('AUTH0_REDIRECT_URI');
+String auth0Issuer = dotenv.get('AUTH0_ISSUER');
 
 Future main() async {
   // To load the .env file contents into dotenv.
@@ -43,15 +43,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    const text = Text('Auth0 Demo');
+    const circularProgressIndicator = CircularProgressIndicator();
     return MaterialApp(
       title: 'Auth0 Demo',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Auth0 Demo'),
+          title: text,
         ),
         body: Center(
           child: isBusy
-              ? CircularProgressIndicator()
+              ? circularProgressIndicator
               : isLoggedIn
                   ? Profile(logoutAction, name, picture)
                   : Login(loginAction, errorMessage),
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Map<String, dynamic>> getUserDetails(String? accessToken) async {
-    final url = Uri.parse('https://$AUTH0_DOMAIN/userinfo');
+    final url = Uri.parse('https://$auth0Domain/userinfo');
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $accessToken'},
@@ -91,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final AuthorizationTokenResponse? result =
           await appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(AUTH0_CLIENT_ID, AUTH0_REDIRECT_URI,
-            issuer: 'https://$AUTH0_DOMAIN',
+        AuthorizationTokenRequest(auth0ClientId, auth0RedirectUri,
+            issuer: 'https://$auth0Domain',
             scopes: [
               'openid',
               'profile',
@@ -116,9 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
         name = idToken['name'];
         picture = profile['picture'];
       });
-    } catch (e, s) {
-      print('login error: $e - stack: $s');
-
+    } catch (e) {
       setState(() {
         isBusy = false;
         isLoggedIn = false;
@@ -151,9 +151,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       final response = await appAuth.token(TokenRequest(
-        AUTH0_CLIENT_ID,
-        AUTH0_REDIRECT_URI,
-        issuer: AUTH0_ISSUER,
+        auth0ClientId,
+        auth0RedirectUri,
+        issuer: auth0Issuer,
         refreshToken: storedRefreshToken,
       ));
 
@@ -168,8 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
         name = idToken['name'];
         picture = profile['picture'];
       });
-    } catch (e, s) {
-      print('error on refresh token: $e - stack: $s');
+    } catch (e) {
       logoutAction();
     }
   }
@@ -184,10 +183,13 @@ class Profile extends StatelessWidget {
   final String name;
   final String picture;
 
-  Profile(this.logoutAction, this.name, this.picture);
+  const Profile(this.logoutAction, this.name, this.picture);
 
   @override
   Widget build(BuildContext context) {
+    const sizedBox24 = SizedBox(height: 24.0);
+    const sizedBox48 = SizedBox(height: 48.0);
+    const logoutText = Text('Logout');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -203,14 +205,14 @@ class Profile extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 24.0),
+        sizedBox24,
         Text('Name: $name'),
-        SizedBox(height: 48.0),
-        RaisedButton(
+        sizedBox48,
+        ElevatedButton(
           onPressed: () {
             logoutAction();
           },
-          child: Text('Logout'),
+          child: logoutText,
         ),
       ],
     );
@@ -229,14 +231,15 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const loginText = Text('Login');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        RaisedButton(
+        ElevatedButton(
           onPressed: () {
             loginAction();
           },
-          child: Text('Login'),
+          child: loginText,
         ),
         Text(loginError),
       ],
